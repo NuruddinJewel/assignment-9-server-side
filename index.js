@@ -102,21 +102,21 @@ async function run() {
         });
 
         //  Cancel Booking Slot 
-        // app.delete('/bookings/:id', async (req, res) => {
-        //     try {
-        //         const id = req.params.id;
-        //         const query = { _id: new ObjectId(id) };
-        //         const result = await bookingCollection.deleteOne(query);
+        app.delete('/bookings/:id', async (req, res) => {
+            try {
+                const id = req.params.id;
+                const query = { _id: new ObjectId(id) };
+                const result = await bookingCollection.deleteOne(query);
 
-        //         if (result.deletedCount === 0) {
-        //             return res.status(404).send({ message: "Booking record not found" });
-        //         }
-        //         res.send({ success: true, message: "Booking canceled successfully" });
-        //     } catch (error) {
-        //         console.error("Error deleting booking:", error);
-        //         res.status(500).send({ message: "Internal Server Error" });
-        //     }
-        // });
+                if (result.deletedCount === 0) {
+                    return res.status(404).send({ message: "Booking record not found" });
+                }
+                res.send({ success: true, message: "Booking canceled successfully" });
+            } catch (error) {
+                console.error("Error deleting booking:", error);
+                res.status(500).send({ message: "Internal Server Error" });
+            }
+        });
 
         // Add New Arena/Facility 
         // Manage Dashboard
