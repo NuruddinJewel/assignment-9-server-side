@@ -117,22 +117,20 @@ async function run() {
                 res.status(500).send({ message: "Internal Server Error" });
             }
         });
+        //  Add New Arena/Facility 
+        app.post('/facilities', async (req, res) => {
+            try {
+                const newArena = req.body;
+                newArena.pricePerHour = parseFloat(newArena.pricePerHour);
+                newArena.capacity = parseInt(newArena.capacity);
 
-        // Add New Arena/Facility 
-        // Manage Dashboard
-        // app.post('/facilities', async (req, res) => {
-        //     try {
-        //         const newArena = req.body;
-        //         newArena.pricePerHour = parseFloat(newArena.pricePerHour); 
-
-        //         const result = await facilityCollection.insertOne(newArena);
-        //         res.status(201).send(result);
-        //     } catch (error) {
-        //         console.error("Error inserting facility:", error);
-        //         res.status(500).send({ message: "Failed to deploy new arena" });
-        //     }
-        // });
-
+                const result = await facilityCollection.insertOne(newArena);
+                res.status(201).send(result);
+            } catch (error) {
+                console.error("Error inserting facility:", error);
+                res.status(500).send({ message: "Failed to deploy new arena" });
+            }
+        });
     } catch (error) {
         console.error("Database connection error:", error);
     }
