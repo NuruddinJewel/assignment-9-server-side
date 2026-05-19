@@ -3,13 +3,13 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const express = require('express');
 const dotenv = require('dotenv');
-const cors = require('cors'); // CORS 
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb'); // ObjectId
+const cors = require('cors');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000; // fallback 
+const PORT = process.env.PORT || 5000;
 const uri = process.env.MONGODB_URI;
 
 app.use(cors());
@@ -31,12 +31,12 @@ async function run() {
         const bookingCollection = db.collection("bookings");
 
         // Database Connected
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
         // ── Facility and Booking Data ──
 
-        // ১. All Facilities
+        //  All Facilities 
         app.get('/facilities', async (req, res) => {
             try {
                 const result = await facilityCollection.find().toArray();
@@ -46,7 +46,7 @@ async function run() {
             }
         });
 
-        // ২. Get Single Facility by ID (Frontend_Details)
+        //  Get Single Facility by ID 
         app.get('/facilities/:id', async (req, res) => {
             try {
                 const id = req.params.id;
@@ -61,12 +61,12 @@ async function run() {
             }
         });
 
-        // ৩. New Booking (Validation Check)
+        //  New Booking 
         app.post('/bookings', async (req, res) => {
             try {
                 const bookingData = req.body;
 
-                // User Login Mechanism
+                // User Login Mechanism Check
                 if (!bookingData.userEmail || bookingData.userEmail.trim() === "") {
                     return res.status(401).send({
                         success: false,
@@ -74,7 +74,6 @@ async function run() {
                     });
                 }
 
-                // Database save
                 const result = await bookingCollection.insertOne(bookingData);
                 res.status(201).send(result);
 
@@ -83,6 +82,56 @@ async function run() {
                 res.status(500).send({ message: "Failed to complete booking" });
             }
         });
+
+
+        //  My Bookings Feature 
+        app.get('/bookings', async (req, res) => {
+            try {
+                const email = req.query.email;
+                if (!email) {
+                    return res.status(400).send({ message: "Email query parameter is required" });
+                }
+                const query = { userEmail: email };
+
+                const result = await bookingCollection.find(query).toArray();
+                res.send(result);
+            } catch (error) {
+                console.error("Error fetching user bookings:", error);
+                res.status(500).send({ message: "Error fetching user bookings" });
+            }
+        });
+
+        //  Cancel Booking Slot 
+        // app.delete('/bookings/:id', async (req, res) => {
+        //     try {
+        //         const id = req.params.id;
+        //         const query = { _id: new ObjectId(id) };
+        //         const result = await bookingCollection.deleteOne(query);
+
+        //         if (result.deletedCount === 0) {
+        //             return res.status(404).send({ message: "Booking record not found" });
+        //         }
+        //         res.send({ success: true, message: "Booking canceled successfully" });
+        //     } catch (error) {
+        //         console.error("Error deleting booking:", error);
+        //         res.status(500).send({ message: "Internal Server Error" });
+        //     }
+        // });
+
+        // Add New Arena/Facility 
+        // Manage Dashboard
+        // app.post('/facilities', async (req, res) => {
+        //     try {
+        //         const newArena = req.body;
+        //         newArena.pricePerHour = parseFloat(newArena.pricePerHour); 
+
+        //         const result = await facilityCollection.insertOne(newArena);
+        //         res.status(201).send(result);
+        //     } catch (error) {
+        //         console.error("Error inserting facility:", error);
+        //         res.status(500).send({ message: "Failed to deploy new arena" });
+        //     }
+        // });
 
     } catch (error) {
         console.error("Database connection error:", error);
