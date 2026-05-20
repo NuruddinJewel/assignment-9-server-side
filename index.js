@@ -102,8 +102,13 @@ async function run() {
         // Owner Dashboard
         app.get('/owner-bookings', async (req, res) => {
             try {
-                // Owner Booking List
-                const result = await bookingCollection.find().toArray();
+                const ownerEmail = req.query.email;
+
+                if (!ownerEmail) {
+                    return res.status(400).send({ message: "Owner email is required to fetch dashboard data." });
+                }
+                const query = { ownerEmail: ownerEmail };
+                const result = await bookingCollection.find(query).toArray();
                 res.send(result);
             } catch (error) {
                 console.error("Error fetching owner bookings:", error);
