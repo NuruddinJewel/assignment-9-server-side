@@ -99,17 +99,17 @@ async function run() {
             }
         });
 
-        //Owner Dashboard
-        // app.get('/owner-bookings', async (req, res) => {
-        //     try {
-        //         // Owner Booking List
-        //         const result = await bookingCollection.find().toArray();
-        //         res.send(result);
-        //     } catch (error) {
-        //         console.error("Error fetching owner bookings:", error);
-        //         res.status(500).send({ message: "Error fetching dashboard bookings" });
-        //     }
-        // });
+        // Owner Dashboard
+        app.get('/owner-bookings', async (req, res) => {
+            try {
+                // Owner Booking List
+                const result = await bookingCollection.find().toArray();
+                res.send(result);
+            } catch (error) {
+                console.error("Error fetching owner bookings:", error);
+                res.status(500).send({ message: "Error fetching dashboard bookings" });
+            }
+        });
 
         //  Cancel Booking Slot 
         app.delete('/bookings/:id', async (req, res) => {
