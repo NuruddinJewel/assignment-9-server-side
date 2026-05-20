@@ -31,7 +31,6 @@ async function run() {
         const bookingCollection = db.collection("bookings");
 
         // Database Connected
-        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
         // ── Facility and Booking Data ──
@@ -83,8 +82,7 @@ async function run() {
             }
         });
 
-
-        //  My Bookings Feature 
+        //  My Bookings Feature (User end)
         app.get('/bookings', async (req, res) => {
             try {
                 const email = req.query.email;
@@ -100,6 +98,18 @@ async function run() {
                 res.status(500).send({ message: "Error fetching user bookings" });
             }
         });
+
+        //Owner Dashboard
+        // app.get('/owner-bookings', async (req, res) => {
+        //     try {
+        //         // Owner Booking List
+        //         const result = await bookingCollection.find().toArray();
+        //         res.send(result);
+        //     } catch (error) {
+        //         console.error("Error fetching owner bookings:", error);
+        //         res.status(500).send({ message: "Error fetching dashboard bookings" });
+        //     }
+        // });
 
         //  Cancel Booking Slot 
         app.delete('/bookings/:id', async (req, res) => {
@@ -117,12 +127,14 @@ async function run() {
                 res.status(500).send({ message: "Internal Server Error" });
             }
         });
+
         //  Add New Arena/Facility 
         app.post('/facilities', async (req, res) => {
             try {
                 const newArena = req.body;
-                newArena.pricePerHour = parseFloat(newArena.pricePerHour);
-                newArena.capacity = parseInt(newArena.capacity);
+
+                newArena.pricePerHour = !isNaN(parseFloat(newArena.pricePerHour)) ? parseFloat(newArena.pricePerHour) : 0;
+                newArena.capacity = !isNaN(parseInt(newArena.capacity)) ? parseInt(newArena.capacity) : 0;
 
                 const result = await facilityCollection.insertOne(newArena);
                 res.status(201).send(result);
@@ -131,6 +143,7 @@ async function run() {
                 res.status(500).send({ message: "Failed to deploy new arena" });
             }
         });
+
     } catch (error) {
         console.error("Database connection error:", error);
     }
